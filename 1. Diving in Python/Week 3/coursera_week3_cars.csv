@@ -1,0 +1,8 @@
+car_type;brand;passenger_seats_count;photo_file_name;body_whl;carrying;extra
+car;Nissan xTtrail;4;f1.jpeg;;2.5;
+truck;Man;;f2.png;8x3x2.5;20;
+truck;Man;;f2.png;;20;
+car;Mazda 6;4;f3.jpeg;;2.5;
+;;;
+spec_machine;Hitachi;;f4;;1.2;Легкая техника для уборки снега
+
