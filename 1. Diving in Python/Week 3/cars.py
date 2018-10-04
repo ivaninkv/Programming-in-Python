@@ -19,7 +19,7 @@ class Car(BaseCar):
     def __init__(self, car_type, brand, photo_file_name, carrying, passenger_seats_count):        
         super(Car, self).__init__(car_type, brand, photo_file_name, carrying)
         self.car_type = car_type
-        self.passenger_seats_count = passenger_seats_count
+        self.passenger_seats_count = int(passenger_seats_count)
 
 
 class Truck(BaseCar):
@@ -29,6 +29,9 @@ class Truck(BaseCar):
         self.body_width = float(body_whl.split('x')[0]) if len(body_whl) > 0 else 0.
         self.body_height = float(body_whl.split('x')[1]) if len(body_whl) > 0 else 0.
         self.body_length = float(body_whl.split('x')[2]) if len(body_whl) > 0 else 0.
+
+    def get_body_volume(self):
+        return self.body_width * self.body_height * self.body_length
 
 
 class SpecMachine(BaseCar):
