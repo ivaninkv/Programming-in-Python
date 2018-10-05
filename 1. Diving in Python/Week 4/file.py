@@ -1,11 +1,11 @@
 import os
 import tempfile
 
-class File:
-    seek = 0
+class File:    
 
     def __init__(self, full_filepath):
         self.full_filepath = full_filepath
+        self.seek = 0
 
     def __str__(self):
         return self.full_filepath
@@ -49,7 +49,7 @@ def main():
     print(f.seek, f2.seek)
 
     for line in f3:
-        print(line, end='')
+        print(line, end ='')
 
 if __name__ == '__main__':
     main()
