@@ -19,7 +19,8 @@ class Client:
         return server_answer
 
     async def _asyncio_client(self, message, loop):
-        reader, writer = await asyncio.open_connection(self.host, self.port, loop=loop)        
+        con = asyncio.open_connection(self.host, self.port) 
+        reader, writer = await asyncio.wait_for(con, self.timeout, loop=loop)               
         writer.write(message.encode())        
         server_answer = await reader.read()        
         writer.close()
@@ -38,7 +39,7 @@ class Client:
         if server_answer[0:2] != self.success_answer[0:2]:
             raise ClientError
 
-        server_answer = 'ok\npalm.cpu 10.5 1501864247\neardrum.cpu 15.3 1501864259\n\n'        
+        # server_answer = 'ok\npalm.cpu 10.5 1501864247\neardrum.cpu 15.3 1501864259\n\n'        
         for metrics in server_answer[3:].split('\n')[:-2]:
             metric = metrics.split()            
             if not result.get(metric[0]):
