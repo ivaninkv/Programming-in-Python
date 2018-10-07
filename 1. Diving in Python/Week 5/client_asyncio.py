@@ -39,16 +39,17 @@ class Client:
         if server_answer[0:2] != self.success_answer[0:2]:
             raise ClientError
 
-        # server_answer = 'ok\npalm.cpu 10.5 1501864247\neardrum.cpu 15.3 1501864259\n\n'        
-        for metrics in server_answer[3:].split('\n')[:-2]:
+         # server_answer = 'ok\npalm.cpu 10.5 1\npalm.cpu 0.5 2\neardrum.cpu 15.3 3\n\n'        
+        for metrics in server_answer[3:].split('\n')[:-2]:            
             metric = metrics.split()            
             if not result.get(metric[0]):
-                result[metric[0]] = (int(metric[2]), float(metric[1]))
-
+                result[metric[0]] = []            
+            result[metric[0]].append((int(metric[2]), float(metric[1])))        
         return result
 
 
-def main():
+
+def _main():
     client = Client('127.0.0.1', 8888, 15)
     
     client.put('palm.cpu', 0.5, timestamp=1150864247)
@@ -62,7 +63,7 @@ def main():
     print(client.get('*'))
 
 if __name__ == '__main__':
-    main()
+    _main()
 
 
 
