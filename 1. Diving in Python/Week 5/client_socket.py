@@ -11,13 +11,19 @@ class Client:
         self.timeout = timeout
         self.success_answer = 'ok\n\n'        
     
+    def storage(self):
+        with socket.create_connection((self.host, self.port), self.timeout) as sock:
+            sock.sendall('storage\n'.encode())
+            return sock.recv(1024).decode()
+
     def put(self, metric_name, metric_value, timestamp = str(int(time.time()))):
-        command_string = f'put {metric_name} {metric_value} {timestamp}\n'
+        command_string = f'put {metric_name} {metric_value} {timestamp}\n'        
         with socket.create_connection((self.host, self.port), self.timeout) as sock:
             sock.sendall(command_string.encode())
             server_answer = sock.recv(1024).decode()
         if server_answer != self.success_answer:
             raise ClientError(server_answer)
+        return server_answer
         
 
     def get(self, metric_name):
@@ -29,8 +35,8 @@ class Client:
         if server_answer[0:2] != self.success_answer[0:2]:
             raise ClientError
         
-        # server_answer = 'ok\npalm.cpu 10.5 1\npalm.cpu 0.5 2\neardrum.cpu 15.3 3\n\n'        
-        for metrics in server_answer[3:].split('\n')[:-2]:            
+        # server_answer = 'ok\npalm.cpu 10.5 1\npalm.cpu 0.5 2\neardrum.cpu 15.3 3\n\n'               
+        for metrics in server_answer[3:].split('\n')[:-2]:                                    
             metric = metrics.split()            
             if not result.get(metric[0]):
                 result[metric[0]] = []            
@@ -40,14 +46,15 @@ class Client:
 def _main():
     client = Client('127.0.0.1', 8888, 15)
     
-    # client.put('palm.cpu', 0.5, timestamp=1150864247)
-    # client.put('palm.cpu', 2.0, timestamp=1150864248)
-    # client.put('palm.cpu', 0.5, timestamp=1150864248)
+    client.put('palm.cpu', 0.5, timestamp=1)
+    client.put('palm.cpu', 2.0, timestamp=1)
+    client.put('palm.cpu', 0.5, timestamp=1150864248)
 
-    # client.put('eardrum.cpu', 3, timestamp=1150864250)
-    # client.put('eardrum.cpu', 4, timestamp=1150864251)
-    # client.put('eardrum.memory', 4200000)
-
+    client.put('eardrum.cpu', 3, timestamp=1150864250)
+    client.put('eardrum.cpu', 4, timestamp=1150864251)
+    client.put('eardrum.memory', 4200000)
+    
+    print(client.storage())
     print(client.get('*'))
 
 if __name__ == '__main__':
