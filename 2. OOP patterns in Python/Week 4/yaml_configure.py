@@ -13,6 +13,26 @@ class AbstractLevel(yaml.YAMLObject):
     def get_objects(cls):
         return cls.Objects()
 
+    @classmethod
+    def from_yaml(cls, loader, node):
+        def create_easy(loader, node):
+            data = loader.construct_mapping(node)
+            print(data)
+
+        def create_medium(loader, node):
+            data = loader.construct_mapping(node)
+            print(data)
+
+        def create_hard(loader, node):
+            data = loader.construct_mapping(node)
+            print(data)
+
+        loader.add_constructor('!easy_level', create_easy)
+        loader.add_constructor('!medium_level', create_medium)
+        loader.add_constructor('!hard_level', create_hard)
+
+        return loader.construct_mapping(node)['levels']
+
     class Map(ABC):
         pass
 
@@ -131,35 +151,33 @@ class HardLevel(AbstractLevel):
 
 
 def main():
-    levels = yaml.load(
-        '''
-        levels:
-        -!easy_level: {}
-        -!medium_level:
-            enemy: ['rat']
-        -!hard_level:
-            enemy: 
-                -rat
-                -snake
-                -dragon
-            enemy_count: 10''')
+    with open('levels.yml') as f:
+        lvls = f.read()
+    
+    # print(type(lvls))
+    # exit()
 
-    print(levels)
+    levels1 = yaml.load(lvls)
+ 
+    
 
-    Levels = {'levels':[]}
+    levels2 = {'levels':[]}
     _map = EasyLevel.Map()
     _obj = EasyLevel.Objects()
-    Levels['levels'].append({'map': _map, 'obj': _obj})
+    levels2['levels'].append({'map': _map, 'obj': _obj})
 
     _map = MediumLevel.Map()
     _obj = MediumLevel.Objects()
     _obj.config = {'enemy':['rat']}
-    Levels['levels'].append({'map': _map, 'obj': _obj})
+    levels2['levels'].append({'map': _map, 'obj': _obj})
 
     _map = HardLevel.Map()
     _obj = HardLevel.Objects()
     _obj.config = {'enemy': ['rat', 'snake', 'dragon'], 'enemy_count': 10}
-    Levels['levels'].append({'map': _map, 'obj': _obj})
+    levels2['levels'].append({'map': _map, 'obj': _obj})
+
+    print(levels1 == levels2)
+    print(levels1)    
 
 if __name__ == '__main__':
     main()

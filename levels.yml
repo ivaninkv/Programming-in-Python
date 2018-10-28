@@ -1,0 +1,10 @@
+levels:
+  -!easy_level: {}
+  -!medium_level:
+    enemy: ['rat']
+  -!hard_level:
+    enemy: 
+      - rat
+      - snake
+      - dragon
+    enemy_count: 10
