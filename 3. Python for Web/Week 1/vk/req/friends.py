@@ -1,13 +1,12 @@
 import requests
-import operator
 from datetime import datetime
-from contracts import contract
+# from contracts import contract
 
 
 ACCESS_TOKEN = '17da724517da724517da72458517b8abce117da17da72454d235c274f1a2be5f45ee711'
 
 
-@contract
+# @contract
 def get_user_id(uid: str) -> int:
     '''
     Функция возвращает id пользователя по username или user_id.
@@ -22,7 +21,7 @@ def get_user_id(uid: str) -> int:
         return 0
     
 
-@contract
+# @contract
 def dict_to_sorted_list(dictionary: dict) -> list:
     '''
     Функция преобразовывает словарь в отсортированный список.
@@ -32,7 +31,7 @@ def dict_to_sorted_list(dictionary: dict) -> list:
     return list(sorted_items)
 
 
-@contract
+# @contract
 def calc_age(uid: str) -> list:
     '''
     Функция возвращает распределение друзей по возрасту.    
@@ -59,8 +58,8 @@ def calc_age(uid: str) -> list:
     return dict_to_sorted_list(ages)
 
 
-if __name__ == '__main__':
-    res = calc_age('reigning')
-    print(res)
+# if __name__ == '__main__':
+#     res = calc_age('reigning')
+#     print(res)
     # print('='*50)
     # print(calc_age('id10'))
