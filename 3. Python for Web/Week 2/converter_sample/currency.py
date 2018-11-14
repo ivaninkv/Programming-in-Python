@@ -1,26 +1,26 @@
+import requests
 from bs4 import BeautifulSoup
 from decimal import Decimal
 
 
 def convert(amount, cur_from, cur_to, date, requests):
-    response = requests.get()  # Использовать переданный requests
-    # ...
-    result = Decimal('3754.8057')
-    return result  # не забыть про округление до 4х знаков после запятой
+    response = requests.get('http://www.cbr.ru/scripts/XML_daily.asp', params = {'date_req':date})  # Использовать переданный requests
+    currency_rates = BeautifulSoup(response.text, 'lxml')
+    cur = {}
+    for val in [cur_from, cur_to]:
+        if val == 'RUR':
+            cur[val] = {'nominal': Decimal(1), 'value': Decimal(1)}
+        else:
+            node = currency_rates.find(string=val).parent.parent
+            cur[val] = {'nominal': Decimal(node.nominal.text), 'value': Decimal(node.value.text.replace(',', '.'))}
+    
+    result = (Decimal(amount) * cur[cur_from]['value'] / cur[cur_from]['nominal']) / cur[cur_to]['value'] * cur[cur_to]['nominal']
 
+    return result.quantize(Decimal('0.0001'))
 
-
-
-
-
-
+   
 def main():
-    import requests
-    response = requests.get('http://www.cbr.ru/scripts/XML_daily.asp?date_req=02/03/2002')
-    cur = BeautifulSoup(response.text, 'lxml')
-    val = cur.find_all('valute')
-    for i in val:
-        print(i)
+    print(convert(155, 'EUR', 'JPY', '14/11/2018', requests))   
 
 if __name__ == '__main__':
     main()
