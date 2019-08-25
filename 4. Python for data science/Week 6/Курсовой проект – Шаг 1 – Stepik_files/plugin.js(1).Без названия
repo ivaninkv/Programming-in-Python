@@ -1,0 +1,95 @@
+/**
+ * Fix 0x0 size of a SVG image within image widget
+ * in case when image have no defined intrinsic size:
+ *   - no embedded svg dimensions (<svg width="..." height="...">),
+ *   - no defined img size (<img width="..." height="...">).
+ *
+ * Usage: `extraPlugins="image-svgfix"`.
+ */
+(function() {
+  CKEDITOR.plugins.add('image-svgfix', {
+    afterInit: function(editor) {
+      var imgWidget = editor.widgets.registered.image;
+      if (!imgWidget) {
+        return;
+      }
+
+      var origDataFunc = imgWidget.data;
+      var _this = this;
+      imgWidget.data = function() {
+        origDataFunc.apply(this, arguments);
+
+        if (this.wrapper) {
+          _this._applySvgSizeFix(this);
+        }
+      };
+    },
+
+    onLoad: function() {
+      var inlineImgWidget = '.cke_widget_image.cke_image_nocaption.cke_widget_inline';
+      var blockImgWidget = '.cke_widget_image.cke_image_nocaption.cke_widget_block';
+      var figureWidget = '.cke_widget_image:not(.cke_image_nocaption)';
+
+      var inlineUnsizedSvg = inlineImgWidget + '[data-unsized-svg] > '
+          + 'img[data-widget="image"]:not([width]):not([height])';
+
+      var blockUnsizedSvg = blockImgWidget + '[data-unsized-svg] > '
+          + '[data-widget="image"] img:not([width]):not([height])';
+
+      CKEDITOR.addCss(
+        inlineUnsizedSvg + ', ' + blockUnsizedSvg + ' { width: 100vw; } '
+        + figureWidget + ' .cke_image_resizer_wrapper { width: 100%; }'
+      );
+    },
+
+    _applySvgSizeFix: function(widget) {
+      var handleLoadedImg = function() {
+        // Detect SVG image without defined intrinsic size:
+        //   - no embedded svg dimensions (<svg width="..." height="...">),
+        //   - no defined img size (<img width="..." height="...">).
+        //
+        // Such images have a natural width of 300px and a natural height
+        // of 150px by default, when an aspect ratio is not defined.
+        // If an aspect ratio is defined using svg's "viewBox", the width
+        // can change proportionally to the constant height of 150px,
+        // or vice versa with the constant width of 300px - depending on
+        // the aspect ratio value.
+        // https://www.w3.org/TR/CSS2/visudet.html#inline-replaced-width
+        // https://www.w3.org/TR/css-sizing-3/#intrinsic
+        //
+        // In FF the behaviour is different: a natural height and a natural
+        // width are equal to zero.
+
+        var isZeroSized = this.width === 0
+            && this.height === 0
+            && this.attributes.width === undefined
+            && this.attributes.height === undefined;
+
+        var isUnsizedSVG = isZeroSized && (
+          this.naturalHeight === 150
+            || this.naturalWidth === 300
+            || (this.naturalHeight === 0 && this.naturalWidth === 0)
+        );
+
+        if (isUnsizedSVG) {
+          widget.wrapper.setAttribute('data-unsized-svg', '');
+        }
+      };
+
+      // We need to remove this attr to reset "width: 100vw" style,
+      // to check "this.width === 0" further.
+      widget.wrapper.removeAttribute('data-unsized-svg');
+
+      var img = widget.parts.image.$;
+      if (img.complete) {
+        handleLoadedImg.apply(img);
+      } else {
+        img.onload = function() {
+          if (widget.wrapper) {
+            handleLoadedImg.apply(this);
+          }
+        };
+      }
+    }
+  });
+})();

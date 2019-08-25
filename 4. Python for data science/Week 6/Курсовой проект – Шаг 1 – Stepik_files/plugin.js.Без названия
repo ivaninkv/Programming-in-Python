@@ -1,0 +1,139 @@
+/**
+ * Insert image via uploadcare dialog - plugin for CKEditor.
+ *
+ * Usage:
+ * - Add `extraPlugins="image-uploadcare"` option.
+ * - If you want to remove default image button from toolbar, set
+ *   `config.imageUploadcare_hideDefaultImageToolbarButton` to true.
+ */
+(function() {
+  CKEDITOR.plugins.add('image-uploadcare', {
+    requires: 'notification',
+
+    init: function(editor) {
+      editor.addCommand('image-uploadcare-insert', {
+        allowedContent: 'img[!src,alt]',
+        requiredContent: 'img[src,alt]',
+        exec: exec
+      });
+
+      editor.ui.addButton('image-uploadcare', {
+        label: 'Insert Image',
+        icon: 'image',
+        command: 'image-uploadcare-insert',
+
+        // Default Position of the Default Image Plugin or
+        // Enhanced Image Plugin button.
+        toolbar: 'insert,10'
+      });
+
+      if (editor.config.imageUploadcare_hideDefaultImageToolbarButton) {
+        editor.once('contentDom', function() {
+          var toolbarLocation = this.config.toolbarLocation;
+          var toolbarElement = this.ui.space(toolbarLocation);
+          if (!toolbarElement) {
+            return;
+          }
+
+          var btn = toolbarElement.findOne('.cke_button__image');
+          if (btn) {
+            // We can't use "removeButtons" feature, otherwise "image2" plugin
+            // (Enhanced Image Plugin) won't be initialized completely,
+            // if it is used. WTF, if there is "removePlugins" option
+            // available?
+            btn.setStyle('display', 'none');
+          }
+        });
+      }
+    }
+  });
+
+  function exec(editor) {
+    var uploadcare = window.uploadcare;
+    if (!uploadcare) {
+      return;
+    }
+
+    var dialog = uploadcare.openDialog(null, {
+      crop: true,
+      validators: [imagesOnly]
+    });
+
+    dialog.done(function(file) {
+      var notification = editor.showNotification(
+        'Image is uploading...',
+        'progress',
+        0
+      );
+
+      file.progress(function(uploadInfo) {
+        notification.update({
+          progress: uploadInfo.progress
+        });
+      }).done(function(fileInfo) {
+        notification.update({
+          progress: 1
+        });
+
+        insertImage(editor, fileInfo, function() {
+          notification.update({
+            message: 'Image uploaded.',
+            type: 'success',
+            important: true
+          });
+        });
+      }).fail(function(error, fileInfo) {
+        let errMsg = 'Unable to insert image: ' + error;
+        console.error(errMsg, fileInfo);
+        notification.update({
+          message: errMsg,
+          type: 'warning',
+          important: true
+        });
+      });
+    }).fail(function(result) {
+      // Do nothing: dialog closed and no file or file group was selected.
+      // The result argument is either null or the last selected file.
+    });
+  }
+
+  function imagesOnly(fileInfo) {
+    let mime;
+    if (fileInfo.isStored) {
+      // File has been uploaded to the cdn.
+      mime = fileInfo.mimeType;
+    } else {
+      // Validator is called before uploading the file to the cdn.
+      mime = fileInfo.sourceInfo
+        && fileInfo.sourceInfo.file
+        && fileInfo.sourceInfo.file.type;
+    }
+
+    // We do not use 'fileInfo.isImage' because of the bug
+    // https://github.com/uploadcare/uploadcare-widget/issues/533
+    if (mime && !mime.startsWith('image/')) {
+      throw new Error('image');
+    }
+  }
+
+  function insertImage(editor, fileInfo, callback) {
+    var src = fileInfo.cdnUrl;
+
+    // Preload image to:
+    //  - remove the delay until the image appears within
+    //    the image2 widget and in the editor. Notify the user that the image
+    //    is uploaded when it is actually displayed.
+    //  - HACK: fix autogrow feature. CKEditor's autogrow plugin is not able to
+    //    do autogrow, if an image is loaded *after* insertion into the editor.
+    var image = new Image();
+    image.src = src;
+
+    // We don't handle `onerror` separately, because current func
+    // is called only after the image has been successfully uploaded
+    // to the Uploadcare. So if an error occurs, it is most likely temporary.
+    image.onload = image.onerror = function() {
+      editor.insertHtml('<img src="' + src + '" alt="" />');
+      callback();
+    };
+  }
+})();

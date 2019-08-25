@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,400italic,500,700,700italic&subset=latin,greek,greek-ext,vietnamese,cyrillic-ext,cyrillic,latin-ext');
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono:300,400&subset=cyrillic');
+
+body {
+  font-family: "Roboto", sans-serif;
+  color: #222;
+}
+
+tt, code, kbd, samp {
+  font-family: "Roboto Mono", monospace;
+}
+
+/* Menu item in dropdown menu (Styles, Font Size, etc. dropdowns). */
+.cke_panel_listItem a:focus {
+  /* Override default dotted outline. */
+  outline: 1px solid #c3c3c3;
+  outline-offset: -1px;
+}
+
+/* Title separator in dropdown menu (Styles, etc. dropdowns). */
+.cke_panel_grouptitle {
+  padding: 8px 6px;
+
+  text-align: center;
+  font-weight: normal;
+  border: none;
+  color: #999;
+  background: none;
+}
+
+/* "Code" menu item in Styles dropdown. */
+.cke_panel_listItem > a[href="javascript:void('Code')"] > code {
+  padding: 2px 5px;
+  background-color: #f3f4f6;
+  color: #000;
+  border: 1px solid #ecedf1;
+  border-radius: 3px;
+  font-size: .9em;
+}

@@ -1,0 +1,307 @@
+/**
+ * @license Copyright (c) 2003-2018, CKSource - Frederico Knabben. All rights reserved.
+ * For licensing, see https://ckeditor.com/legal/ckeditor-oss-license
+ */
+
+/**
+ * Define changes to default configuration of CKEditor here.
+ * This method is called during initialization for each newly created CKEditor
+ * instance.
+ *
+ * For example:
+ * config.language = 'fr';
+ * config.uiColor = '#AADC6E';
+ */
+CKEDITOR.editorConfig = function(config) {
+  config.autoUpdateElement = false;
+
+  // https://ckeditor.com/docs/ckeditor4/latest/guide/dev_autogrow.html#height-adjustment-on-startup
+  config.autoGrow_onStartup = true;
+
+  // Add extra vertical space (= height in px of the default paragraph)
+  // between the content and the editor bottom bar.
+  // HACK: This fixes "content jumping" when inserting a new paragraph
+  // to the end of the content.
+  config.autoGrow_bottomSpace = 25;
+
+  config.mathJaxLib = CKEDITOR.getUrl('../mathjax/MathJax.js');
+  config.codeSnippet_highlightjsLib = CKEDITOR.getUrl(
+    '../highlightjs/highlight.pack.js'
+  );
+  config.codeSnippet_highlightjsThemes = CKEDITOR.getUrl(
+    '../highlightjs/styles/{THEME}.css'
+  );
+  config.codeSnippet_theme = 'googlecode';
+  config.codeSnippet_languages = {
+    'no-highlight': 'No highlight',
+    '1c': '1C',
+    actionscript: 'ActionScript',
+    apache: 'Apache',
+    applescript: 'AppleScript',
+    avrasm: 'Avrasm',
+    axapta: 'Axapta',
+    bash: 'Bash',
+    brainfuck: 'Brainfuck',
+    clojure: 'Clojure',
+    cmake: 'CMake',
+    coffeescript: 'CoffeeScript',
+    cpp: 'C++',
+    cs: 'C#',
+    css: 'CSS',
+    d: 'D',
+    delphi: 'Delphi',
+    diff: 'Diff',
+    django: 'Django',
+    dos: 'Dos',
+    erlang: 'Erlang',
+    glsl: 'GLSL',
+    go: 'Go',
+    haskell: 'Haskell',
+    html: 'HTML',
+    http: 'HTTP',
+    ini: 'INI',
+    java: 'Java',
+    javascript: 'JavaScript',
+    json: 'JSON',
+    kotlin: 'Kotlin',
+    lisp: 'Lisp',
+    lua: 'Lua',
+    makefile: 'Makefile',
+    markdown: 'Markdown',
+    matlab: 'MATLAB',
+    mel: 'Mel',
+    nginx: 'Nginx',
+    objectivec: 'Objective-C',
+    parser3: 'Parser 3',
+    perl: 'Perl',
+    php: 'PHP',
+    profile: 'Profile',
+    python: 'Python',
+    r: 'R',
+    rib: 'Rib',
+    rsl: 'Rsl',
+    ruby: 'Ruby',
+    rust: 'Rust',
+    scala: 'Scala',
+    smalltalk: 'Smalltalk',
+    sql: 'SQL',
+    tex: 'TeX',
+    vala: 'Vala',
+    vbscript: 'VBScript',
+    vhdl: 'VHDL',
+    xhtml: 'XHTML',
+    xml: 'XML'
+  };
+
+  // Custom order of toolbar elements by default,
+  // if the toolbar layout is not explicitly defined via `config.toolbar`.
+  // Created with "./samples/toolbarconfigurator/index.html#basic".
+  config.toolbarGroups = [
+    { name: 'clipboard', groups: ['clipboard', 'undo'] },
+    { name: 'basicstyles', groups: ['basicstyles', 'cleanup'] },
+    { name: 'styles', groups: ['styles'] },
+    {
+      name: 'editing',
+      groups: ['find', 'selection', 'spellchecker', 'editing']
+    },
+    { name: 'colors', groups: ['colors'] },
+    {
+      name: 'paragraph',
+      groups: ['list', 'indent', 'blocks', 'align', 'bidi', 'paragraph']
+    },
+    { name: 'links', groups: ['links'] },
+    { name: 'insert', groups: ['insert'] },
+    { name: 'tools', groups: ['tools'] },
+    { name: 'document', groups: ['mode', 'document', 'doctools'] },
+    { name: 'forms', groups: ['forms'] },
+    { name: 'others', groups: ['others'] },
+    { name: 'about', groups: ['about'] }
+  ];
+
+  // Custom toolbar definition "StepEditToobar".
+  // Usage: `config.toolbar = 'StepEditToolbar';`
+  // Created with "./samples/toolbarconfigurator/index.html#advanced".
+  config.toolbar_StepEditToolbar = [
+    { name: 'clipboard', items: [ 'Undo', 'Redo' ] },
+    { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline' ] },
+    { name: 'styles', items: [ 'Styles' ] },
+    {
+      name: 'paragraph',
+      items: [
+        'TextColor', 'NumberedList', 'BulletedList', 'Blockquote',
+        '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight'
+      ]
+    },
+    { name: 'links', items: [ 'Link', 'Unlink' ] },
+    {
+      name: 'insert',
+      items: [ 'image-uploadcare', 'Image', 'Mathjax', 'Table', 'CodeSnippet' ]
+    },
+    { name: 'document', items: [ 'Source' ] }
+  ];
+
+  config.toolbar_CommentToolbar = [
+    { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline' ] },
+    { name: 'styles', items: [ 'Styles' ] },
+    {
+      name: 'paragraph',
+      items: [ 'NumberedList', 'BulletedList', 'Blockquote' ]
+    },
+    { name: 'links', items: [ 'Link', 'Unlink' ] },
+    {
+      name: 'insert',
+      items: [ 'image-uploadcare', 'Image', 'Mathjax', 'CodeSnippet' ]
+    }
+  ];
+
+  config.toolbar_AnnouncementToolbar = [
+    { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline' ] },
+    { name: 'styles', items: [ 'Styles' ] },
+    {
+      name: 'paragraph',
+      items: [ 'NumberedList', 'BulletedList' ]
+    },
+    { name: 'links', items: [ 'Link', 'Unlink' ] },
+    {
+      name: 'insert',
+      items: [ 'image-uploadcare', 'Image', 'CodeSnippet' ]
+    },
+    { name: 'document', items: [ 'Source' ] }
+  ];
+
+  config.toolbar_InstructionToolbar = [
+    { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline' ] },
+    { name: 'styles', items: [ 'Styles' ] },
+    {
+      name: 'paragraph',
+      items: [ 'NumberedList', 'BulletedList', 'Blockquote' ]
+    },
+    { name: 'links', items: [ 'Link', 'Unlink' ] },
+    {
+      name: 'insert',
+      items: [ 'image-uploadcare', 'Image', 'Mathjax', 'CodeSnippet' ]
+    }
+  ];
+
+  config.toolbar_FreeAnswerQuizToolbar = [
+    { name: 'clipboard', items: [ 'Undo', 'Redo' ] },
+    { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline' ] },
+    { name: 'styles', items: [ 'Styles' ] },
+    {
+      name: 'paragraph',
+      items: [ 'NumberedList', 'BulletedList' ]
+    },
+    { name: 'links', items: [ 'Link', 'Unlink' ] },
+    {
+      name: 'insert',
+      items: [ 'image-uploadcare', 'Image', 'Mathjax', 'CodeSnippet' ]
+    }
+  ];
+
+  config.toolbar_CourseDescriptionToolbar = [
+    { name: 'clipboard', items: [ 'Undo', 'Redo' ] },
+    { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline' ] },
+    { name: 'styles', items: [ 'Styles' ] },
+    {
+      name: 'paragraph',
+      items: ['NumberedList', 'BulletedList']
+    },
+    { name: 'links', items: [ 'Link', 'Unlink' ] },
+    {
+      name: 'insert',
+      items: [ 'Image', 'image-uploadcare' ]
+    },
+    { name: 'document', items: [ 'Source' ] }
+  ];
+
+  config.toolbar_CourseRequirementsToolbar = [
+    { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline' ] },
+    {
+      name: 'paragraph',
+      items: ['NumberedList', 'BulletedList']
+    },
+    { name: 'links', items: [ 'Link', 'Unlink' ] }
+  ];
+
+  // Remove excess "Paste" menu item. Anyway, it does not work properly
+  // (https://github.com/ckeditor/ckeditor-dev/issues/469).
+  // See source for details: https://git.io/fpY0q
+  config.menu_groups = config.menu_groups.replace(/clipboard,?/, '');
+
+  config.colorButton_colors = '66cc66,64b0f4,a03881,ff4363';
+
+  config.linkShowAdvancedTab = false;
+  config.linkShowTargetTab = false;
+
+  config.magicline_color = 'rgba(133, 214, 133)';
+
+  config.imageUploadcare_hideDefaultImageToolbarButton = true;
+
+  // Enable native browser spell checker (disabled by default).
+  // NOTE: users can always reach the native context menu with word suggestions
+  // by holding the Ctrl key when right-clicking if
+  // `config.browserContextMenuOnCtrl` is enabled or you are simply not using
+  // the context menu plugin.
+  config.disableNativeSpellChecker = false;
+
+  /*
+   * Content filtering: automatic mode and allow additional tags/properties,
+   * but disallow certain tags/properties if the automatic configuration needs
+   * minor adjustments.
+   * https://ckeditor.com/docs/ckeditor4/latest/guide/dev_acf.html#automatic-mode
+   * In automatic mode `CKEDITOR.config.disallowedContent` and
+   * `CKEDITOR.config.extraAllowedContent` can be provided together.
+   * https://ckeditor.com/docs/ckeditor4/latest/guide/dev_allowed_content_rules.html
+   *
+   * NOTE: try to keep these rules in sync with "/edy/apps/common/html.py".
+   */
+  // config.allowedContent = null; // Automatic mode is enabled by default.
+  // config.disallowedContent = {};
+  config.extraAllowedContent = {
+    '*': {
+      // Allowed styles in all tags, regardless of enabled tools and plugins.
+      styles: {
+        'color': true,
+        'background-color': true,
+        'background': true,
+        'font-size': true,
+        'font-variant': true,
+        'object-fit': true,
+        'text-align': true
+      }
+    },
+
+    abbr: {
+      attributes: ['title']
+    },
+
+    'sub sup': true,
+
+    // Allow all html5 inline monospace tags.
+    'tt code kbd samp': true,
+
+    // Allow all html5 inline definition-related italicized tags.
+    'i cite em var address dfn': true,
+
+    // TODO: embedded content plugin?
+    iframe: {
+      attributes: [
+        '!src', 'width', 'height', 'sandbox', 'scrolling', 'allowfullscreen'
+      ]
+    },
+
+    // TODO: video tag as well?
+    // TODO: embedded content plugin or audio/video plugin?
+    audio: {
+      attributes: ['!src', 'controls']
+    },
+
+    // TODO: implement ckeditor widget (EDY-9582).
+    'kotlin-runnable': {
+      attributes: [
+        'theme', 'data-target-platform', 'args', 'data-min-compiler-version',
+        'data-highlight-only', 'data-version', 'indent', 'auto-indent'
+      ]
+    }
+  };
+};
